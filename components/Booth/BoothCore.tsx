@@ -1,5 +1,9 @@
+// Orangewood Labs 2023
+// RoboLens Booth - BoothCore Component
+
 "use client";
 
+import styles from "./BoothCore.module.css";
 import {
   Box,
   Heading,
@@ -7,37 +11,109 @@ import {
   GridItem,
   Button,
   Card,
-  CardHeader,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   useDisclosure,
   Spacer,
+  Container,
+  Flex,
+  HStack,
+  Badge,
+  Text,
 } from "@chakra-ui/react";
-import { AiFillCamera } from "react-icons/ai";
+import { AiFillCamera, AiFillAudio } from "react-icons/ai";
+import { BsFillMicMuteFill } from "react-icons/bs";
+import { FaExchangeAlt, FaFileDownload } from "react-icons/fa";
+import { MdHighQuality, MdSignalWifiStatusbar4Bar } from "react-icons/md";
+import { SiLogitech } from "react-icons/si";
+
 import { DownloadIcon } from "@chakra-ui/icons";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Webcam from "react-webcam";
+
+import { VideoFileNameGen, ImageFileNameGen } from "@/lib/NameGen";
 
 // Confetti animation
 import Confetti from "react-confetti";
+import RobotMoveView from "./RobotMoveView/RobotMoveView";
+import { Active, Inactive } from "../StatusIndicator/StatusIndicator";
 
 const BoothCoreComponent = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
+
   const [firstDownload, setFirstDownload] = useState(false);
+  const [mirrored, setMirrored] = useState(false);
+  const [audio, setAudio] = useState(false);
 
   useEffect(() => {
     setFirstDownload(false);
   }, [firstDownload]);
 
+  // React-Webcam Functionality
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [imageList, setImageList] = useState([]);
+  const [capturing, setCapturing] = useState(false);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const mediaRecorderRef = useRef(null);
+
+  // Video Recording Functionality
+  const handleStartCaptureClick = useCallback(() => {
+    setCapturing(true);
+    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+      mimeType: "video/webm",
+    });
+    mediaRecorderRef.current.addEventListener(
+      "dataavailable",
+      handleDataAvailable
+    );
+    mediaRecorderRef.current.start();
+  }, [webcamRef, setCapturing, mediaRecorderRef]);
+
+  const handleDataAvailable = useCallback(
+    ({ data }) => {
+      if (data.size > 0) {
+        setRecordedChunks((prev) => prev.concat(data));
+      }
+    },
+    [setRecordedChunks]
+  );
+
+  const handleStopCaptureClick = useCallback(() => {
+    mediaRecorderRef.current.stop();
+    setCapturing(false);
+  }, [mediaRecorderRef, webcamRef, setCapturing]);
+
+  const handleDownload = useCallback(() => {
+    if (recordedChunks.length) {
+      const blob = new Blob(recordedChunks, {
+        type: "video/mp4",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style = "display: none";
+      a.href = url;
+      const fileName = VideoFileNameGen();
+      a.download = `${fileName}.mp4`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setRecordedChunks([]);
+    }
+  }, [recordedChunks]);
+
+  const handleMirror = () => {
+    setMirrored((prev) => !prev);
+  };
+
+  const handleAudio = () => {
+    setAudio((prev) => !prev);
+  };
 
   const capture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -50,7 +126,8 @@ const BoothCoreComponent = () => {
     setFirstDownload(true);
     const link = document.createElement("a");
     link.href = imgSrc;
-    link.download = "photobooth_snapshot.png";
+    const fileName = ImageFileNameGen();
+    link.download = `${fileName}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -65,6 +142,54 @@ const BoothCoreComponent = () => {
   return (
     <>
       {firstDownload && <Confetti width={width} height={height} />}
+
+      {/* Status Indicators */}
+      <Container maxW="container.lg" mb="10">
+        <HStack>
+          <Badge>
+            <Flex justify="center" align="center" gap="3px" fontSize={"lg"}>
+              <MdHighQuality /> <Text fontSize={"sm"}>HD</Text>
+            </Flex>
+          </Badge>
+
+          <Badge>
+            <Flex justify="center" align="center" gap="3px" fontSize={"lg"}>
+              <MdSignalWifiStatusbar4Bar />
+              <Text fontSize={"sm"}>Connected</Text>
+            </Flex>
+          </Badge>
+
+          <Badge>
+            <Flex justify="center" align="center" gap="5px" fontSize={"xl"}>
+              <SiLogitech /> <Text fontSize={"sm"}>C922 Pro</Text>
+            </Flex>
+          </Badge>
+        </HStack>
+      </Container>
+
+      <Flex maxH={{ base: "2xl", sm: "3xl", md: "4xl" }} justify="center">
+        <Webcam
+          audio={audio}
+          ref={webcamRef}
+          screenshotFormat="image/png"
+          screenshotQuality={1}
+          minScreenshotHeight={1080}
+          minScreenshotWidth={1920}
+          allowFullScreen={true}
+          mirrored={mirrored}
+          videoConstraints={{
+            aspectRatio: 16 / 9,
+            width: 1920,
+            height: 1080,
+            facingMode: "user",
+          }}
+          className={capturing ? styles.blur_box_recording : styles.blur_box}
+          // style={{
+          //   filter: capturing ? "blur(5px)" : "blur(0px)",
+          // }}
+        />
+      </Flex>
+
       <Drawer
         onClose={onClose}
         isOpen={isOpen}
@@ -90,63 +215,119 @@ const BoothCoreComponent = () => {
         </DrawerContent>
       </Drawer>
 
-      <Grid gridTemplateColumns="1fr 0.25fr" gap="4">
-        <GridItem>
-          <Button ref={btnRef} onClick={onOpen} variant="outline">
-            Gallery
-          </Button>
+      <Container maxW="container.lg" py="4">
+        {/* Main Grid */}
+        <Grid gridTemplateColumns="1fr 0.25fr" gap="4">
+          {/* 1 Grid Item - Controls */}
+          <GridItem colEnd={2}>
+            {/* Controls */}
+            <HStack>
+              <Button my="2" onClick={capture} colorScheme="orange">
+                <AiFillCamera />
+                <Spacer px="1" />
+                Take a Photo
+              </Button>
 
-          <Box py="4">
-            <Webcam
-              audio={false}
-              ref={webcamRef}
-              screenshotFormat="image/png"
-              screenshotQuality={1}
-              minScreenshotHeight={1080}
-              minScreenshotWidth={1920}
-            />
-          </Box>
-          <Button my="2" onClick={capture}>
-            <AiFillCamera />
-            <Spacer px="1" />
-            Take a Photo
-          </Button>
-        </GridItem>
+              <Button my="2" onClick={handleMirror}>
+                <FaExchangeAlt />
+                <Spacer px="1" />
+                Mirror
+              </Button>
 
-        {/* Camera Roll */}
-        <GridItem>
-          <Heading size="md" py="2">
-            Camera Roll
-          </Heading>
-          {imgSrc && (
-            <>
-              <Card variant="outline" p="2" my="2">
-                <Heading size="sm" py="1">
-                  Last Photo
-                </Heading>
-                <img src={imgSrc} alt="Captured" />
-                <Button size="sm" onClick={downloadImage} variant="unstyled">
-                  <DownloadIcon />
+              <Button my="2" onClick={handleAudio}>
+                {audio ? <BsFillMicMuteFill /> : <AiFillAudio />}
+              </Button>
+
+              {capturing ? (
+                <Button onClick={handleStopCaptureClick} colorScheme="red">
+                  <Active color="red.900" />
+                  Stop Capture
                 </Button>
-              </Card>
+              ) : (
+                <Button onClick={handleStartCaptureClick} colorScheme="green">
+                  <Inactive color="green.600" />
+                  Start Capture
+                </Button>
+              )}
 
-              <Card variant="outline" p="2" my="2">
-                <Heading size="sm" py="1">
-                  Last 3 Photos
-                </Heading>
-                {imageList.slice(-3).map((image, index) => (
-                  <Box key={index}>
-                    <img src={image} alt="Captured" />
-                    <Spacer p="2" />
-                  </Box>
-                ))}
-              </Card>
-            </>
-          )}
-        </GridItem>
-        {/* Additional functionalities can be incorporated here */}
-        <GridItem></GridItem>
-      </Grid>
+              {recordedChunks.length > 0 && (
+                <Button onClick={handleDownload}>
+                  <FaFileDownload />
+                </Button>
+              )}
+            </HStack>
+          </GridItem>
+
+          {/* 2 Grid Item - Robot Moves */}
+          <GridItem colSpan={2}>
+            <Card variant="outline" p="4">
+              <Heading size="sm" py="2">
+                Robot Moves
+              </Heading>
+              <Flex
+                justifyContent="space-between"
+                gap="4"
+                overflowX={"scroll"}
+                overflowY={"hidden"}
+                py="4"
+              >
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+                <RobotMoveView />
+              </Flex>
+            </Card>
+          </GridItem>
+
+          {/* 3 Grid Item - Previous Mode */}
+          <GridItem>
+            <Button ref={btnRef} onClick={onOpen} variant="outline">
+              Gallery
+            </Button>
+
+            <Box py="4"></Box>
+          </GridItem>
+
+          {/* Camera Roll */}
+          <GridItem>
+            <Heading size="md" py="2">
+              Camera Roll
+            </Heading>
+            {imgSrc && (
+              <>
+                <Card variant="outline" p="2" my="2">
+                  <Heading size="sm" py="1">
+                    Last Photo
+                  </Heading>
+                  <img src={imgSrc} alt="Captured" />
+                  <Button size="sm" onClick={downloadImage} variant="unstyled">
+                    <DownloadIcon />
+                  </Button>
+                </Card>
+
+                <Card variant="outline" p="2" my="2">
+                  <Heading size="sm" py="1">
+                    Last 3 Photos
+                  </Heading>
+                  {imageList.slice(-3).map((image, index) => (
+                    <Box key={index}>
+                      <img src={image} alt="Captured" />
+                      <Spacer p="2" />
+                    </Box>
+                  ))}
+                </Card>
+              </>
+            )}
+          </GridItem>
+          {/* Additional functionalities can be incorporated here */}
+          <GridItem></GridItem>
+        </Grid>
+      </Container>
     </>
   );
 };

@@ -10,59 +10,130 @@ import {
   Icon,
   useColorModeValue,
   createIcon,
+  Flex,
+  SimpleGrid,
 } from "@chakra-ui/react";
+import { FcWebcam, FcTabletAndroid, FcLike } from "react-icons/fc";
 import Link from "next/link";
+import Stats from "@/components/Stats/Stats";
+
+const Feature = ({ title, text, icon }: FeatureProps) => {
+  return (
+    <Stack>
+      <Flex
+        w={16}
+        h={16}
+        align={"center"}
+        justify={"center"}
+        color={"white"}
+        rounded={"full"}
+        bg={"gray.100"}
+        mb={1}
+      >
+        {icon}
+      </Flex>
+      <Text fontWeight={600}>{title}</Text>
+      <Text color={"gray.600"}>{text}</Text>
+    </Stack>
+  );
+};
 
 export default function Home() {
   return (
-    <Container maxW={"3xl"}>
-      <Stack
-        as={Box}
-        textAlign={"center"}
-        spacing={{ base: 8, md: 14 }}
-        py={{ base: 20, md: 36 }}
-      >
-        <Heading
-          fontWeight={600}
-          fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
-          lineHeight={"110%"}
-        >
-          Welcome to <br />
-          <Text as={"span"} className={styles.text_animation}>
-            RoboLens Booth!
-          </Text>
-        </Heading>
-        <Text color={"gray.500"}>
-          Discover the future of interactive experiences with our innovative
-          robotic arm photo system. RoboLens Booth brings a fusion of technology
-          and creativity, providing a unique way to capture moments and create
-          unforgettable memories.
-        </Text>
+    <>
+      <Container maxW={"3xl"} mb="40">
         <Stack
-          direction={"column"}
-          spacing={3}
-          align={"center"}
-          alignSelf={"center"}
-          position={"relative"}
+          as={Box}
+          textAlign={"center"}
+          spacing={{ base: 8, md: 10 }}
+          py={{ base: 2, md: 4 }}
         >
-          <Link href="/booth">
-            <Button
-              colorScheme={"green"}
-              bg={"blue.400"}
-              rounded={"full"}
-              px={6}
-              _hover={{
-                bg: "blue.500",
+          <Flex justify="center">
+            <video
+              style={{
+                maxWidth: "20vw",
+                maxHeight: "40vh",
+                mixBlendMode: "screen",
               }}
-            >
-              Get Started
+              src="/robot_animation.mov"
+              autoPlay
+              loop
+              muted
+              className={styles.video}
+            />
+          </Flex>
+          <Heading
+            fontWeight={600}
+            fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
+            lineHeight={"110%"}
+          >
+            Welcome to <br />
+            <Text as={"span"} className={styles.text_animation}>
+              RoboLens Booth!
+            </Text>
+          </Heading>
+          <Text color={"gray.500"}>
+            Discover the future of interactive experiences with our innovative
+            robotic arm photo system. RoboLens Booth brings a fusion of
+            technology and creativity, providing a unique way to capture moments
+            and create unforgettable memories.
+          </Text>
+          <Stack
+            direction={"column"}
+            spacing={3}
+            align={"center"}
+            alignSelf={"center"}
+            position={"relative"}
+          >
+            <Link href="/booth">
+              <Button
+                colorScheme={"green"}
+                bg={"blue.400"}
+                rounded={"full"}
+                px={6}
+                _hover={{
+                  bg: "blue.500",
+                }}
+              >
+                Get Started
+              </Button>
+            </Link>
+            <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
+              Learn more
             </Button>
-          </Link>
-          <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
-            Learn more
-          </Button>
+          </Stack>
         </Stack>
-      </Stack>
-    </Container>
+      </Container>
+
+      <Container maxW={"5xl"} mb="20">
+        <Box p={4} mb="20">
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+            <Feature
+              icon={<FcWebcam size={50} />}
+              title={"Live Preview and Adjustment"}
+              text={
+                "Users can view a live preview of the camera's perspective and make real-time adjustments to the robotic arm's movement, ensuring the desired composition and perfect shots before they're captured."
+              }
+            />
+            <Feature
+              icon={<FcTabletAndroid size={50} />}
+              title={"User-Friendly Interface"}
+              text={
+                "The system boasts an intuitive and user-friendly interface, making it accessible to a wide range of users. Whether tech-savvy or not, individuals can easily navigate and operate the RoboLens Booth with minimal guidance."
+              }
+            />
+            <Feature
+              icon={<FcLike size={50} />}
+              title={"Unleash Creativity"}
+              text={
+                "With RoboLens Booth, you're the director. Design your photo journey by selecting unique trajectories, angles, and actions for the robotic arm to capture stunning shots, giving you complete control over your visual story."
+              }
+            />
+          </SimpleGrid>
+        </Box>
+
+        <Stats />
+      </Container>
+    </>
   );
 }

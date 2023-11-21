@@ -18,6 +18,7 @@ import {
   Stack,
   useColorMode,
   Center,
+  Heading,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
@@ -51,7 +52,13 @@ export default function Nav() {
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        <Flex
+          h={16}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          maxW="container.xl"
+          mx="auto"
+        >
           <Image
             style={{ marginTop: "10px" }}
             src="/logo.png"
@@ -61,12 +68,12 @@ export default function Nav() {
           />
 
           <Flex alignItems={"center"}>
-            <Stack direction={"row"} spacing={7}>
+            <Stack direction={"row"} spacing={7} align="center">
               {/* <Button onClick={toggleColorMode}>
                 {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
               </Button> */}
 
-              <Text p="1">RoboLens Booth</Text>
+              <Heading size="sm">RoboLens Booth</Heading>
               <Menu>
                 <MenuButton
                   as={Button}
