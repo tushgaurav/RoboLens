@@ -16,8 +16,9 @@ import {
 import { FcWebcam, FcTabletAndroid, FcLike } from "react-icons/fc";
 import Link from "next/link";
 import Stats from "@/components/Stats/Stats";
+import Newsletter from "@/components/Newsletter/Newsletter";
 
-const Feature = ({ title, text, icon }: FeatureProps) => {
+const Feature = ({ title, text, icon }: any) => {
   return (
     <Stack>
       <Flex
@@ -28,12 +29,12 @@ const Feature = ({ title, text, icon }: FeatureProps) => {
         color={"white"}
         rounded={"full"}
         bg={"gray.100"}
-        mb={1}
+        mb={4}
       >
         {icon}
       </Flex>
-      <Text fontWeight={600}>{title}</Text>
-      <Text color={"gray.600"}>{text}</Text>
+      <Text fontWeight={600}  >{title}</Text>
+      <Text color={"gray.400"}>{text}</Text>
     </Stack>
   );
 };
@@ -42,68 +43,75 @@ export default function Home() {
   return (
     <>
       <Container maxW={"3xl"} mb="40">
-        <Stack
-          as={Box}
-          textAlign={"center"}
-          spacing={{ base: 8, md: 10 }}
+        <Flex
+          align={"center"}
+          gap={8}
+          flexDirection={"row-reverse"}
           py={{ base: 2, md: 4 }}
+          flexWrap={"wrap"}
         >
-          <Flex justify="center">
+          <Box >
             <video
               style={{
                 maxWidth: "20vw",
                 maxHeight: "40vh",
                 mixBlendMode: "screen",
               }}
+
               src="/robot_animation.mov"
               autoPlay
               loop
               muted
               className={styles.video}
             />
-          </Flex>
-          <Heading
-            fontWeight={600}
-            fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
-            lineHeight={"110%"}
-          >
-            Welcome to <br />
-            <Text as={"span"} className={styles.text_animation}>
-              RoboLens Booth!
-            </Text>
-          </Heading>
-          <Text color={"gray.500"}>
-            Discover the future of interactive experiences with our innovative
-            robotic arm photo system. RoboLens Booth brings a fusion of
-            technology and creativity, providing a unique way to capture moments
-            and create unforgettable memories.
-          </Text>
-          <Stack
-            direction={"column"}
-            spacing={3}
-            align={"center"}
-            alignSelf={"center"}
-            position={"relative"}
-          >
-            <Link href="/booth">
-              <Button
-                colorScheme={"green"}
-                bg={"blue.400"}
-                rounded={"full"}
-                px={6}
-                _hover={{
-                  bg: "blue.500",
-                }}
+          </Box>
+          <Flex direction={'column'} gap={2}>
+
+            <Box>
+              <Heading
+                fontWeight={600}
+                fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+                lineHeight={"130%"}
               >
-                Get Started
-              </Button>
-            </Link>
-            <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
-              Learn more
-            </Button>
-          </Stack>
-        </Stack>
-      </Container>
+                Welcome to <br />
+                <Text fontSize={"xxx-large"} as={"span"} className={styles.text_animation}>
+                  RoboLens Booth!
+                </Text>
+              </Heading>
+            </Box>
+            <Text color={"gray.200"}>
+              Discover the future of interactive experiences with our innovative
+              robotic arm photo system. RoboLens Booth brings a fusion of
+              technology and creativity, providing a unique way to capture moments
+              and create unforgettable memories.
+            </Text>
+            <Stack
+              direction={'row'}
+              spacing={3}
+              position={"relative"}
+            >
+              <Link href="/booth">
+                <Button
+                  colorScheme={"green"}
+                  bg={"blue.400"}
+                  rounded={"full"}
+                  px={6}
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                >
+                  Get Started
+                </Button>
+              </Link>
+              <Link href="/learn">
+                <Button variant={"link"} colorScheme={"blue"} size={"sm"} padding="3">
+                  Learn more
+                </Button>
+              </Link>
+            </Stack>
+          </Flex>
+        </Flex>
+      </Container >
 
       <Container maxW={"5xl"} mb="20">
         <Box p={4} mb="20">
@@ -133,6 +141,8 @@ export default function Home() {
         </Box>
 
         <Stats />
+
+        <Newsletter />
       </Container>
     </>
   );

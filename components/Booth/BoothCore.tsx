@@ -36,15 +36,20 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import Webcam from "react-webcam";
 
 import { VideoFileNameGen, ImageFileNameGen } from "@/lib/NameGen";
+import { generateUniqueId } from "@/lib/uniqueId";
+import { uploadImage } from "@/lib/uploadImage";
 
 // Confetti animation
 import Confetti from "react-confetti";
 import RobotMoveView from "./RobotMoveView/RobotMoveView";
 import { Active, Inactive } from "../StatusIndicator/StatusIndicator";
 
+const ID = generateUniqueId();
+
 const BoothCoreComponent = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
+  const [imageCount, setImageCount] = useState(0);
 
   const [firstDownload, setFirstDownload] = useState(false);
   const [mirrored, setMirrored] = useState(false);
@@ -55,12 +60,21 @@ const BoothCoreComponent = () => {
   }, [firstDownload]);
 
   // React-Webcam Functionality
-  const webcamRef = useRef(null);
+  const webcamRef = useRef(null) as any;
   const [imgSrc, setImgSrc] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const mediaRecorderRef = useRef(null);
+  const mediaRecorderRef = useRef(null) as any;
+
+  const handleDataAvailable = useCallback(
+    ({ data }: any) => {
+      if (data.size > 0) {
+        setRecordedChunks((prev) => prev.concat(data));
+      }
+    },
+    [setRecordedChunks]
+  );
 
   // Video Recording Functionality
   const handleStartCaptureClick = useCallback(() => {
@@ -73,16 +87,8 @@ const BoothCoreComponent = () => {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
-  }, [webcamRef, setCapturing, mediaRecorderRef]);
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
 
-  const handleDataAvailable = useCallback(
-    ({ data }) => {
-      if (data.size > 0) {
-        setRecordedChunks((prev) => prev.concat(data));
-      }
-    },
-    [setRecordedChunks]
-  );
 
   const handleStopCaptureClick = useCallback(() => {
     mediaRecorderRef.current.stop();
@@ -115,11 +121,14 @@ const BoothCoreComponent = () => {
     setAudio((prev) => !prev);
   };
 
-  const capture = () => {
+  const capture = async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImageList([...imageList, imageSrc]);
     setImgSrc(imageSrc);
-    console.log(imageList);
+    console.log(imageSrc);
+
+    setImageCount((prev) => prev + 1)
+    await uploadImage(ID, imageSrc, `photoBooth-${imageCount}.png`);
   };
 
   const downloadImage = () => {
@@ -184,9 +193,9 @@ const BoothCoreComponent = () => {
             facingMode: "user",
           }}
           className={capturing ? styles.blur_box_recording : styles.blur_box}
-          // style={{
-          //   filter: capturing ? "blur(5px)" : "blur(0px)",
-          // }}
+        // style={{
+        //   filter: capturing ? "blur(5px)" : "blur(0px)",
+        // }}
         />
       </Flex>
 
@@ -203,12 +212,12 @@ const BoothCoreComponent = () => {
           <DrawerBody>
             <p>
               See the photos you have taken here. You can download them by right
-              clicking on the image and selecting "Save Image As".
+              clicking on the image and selecting &quot;Save Image As&quot;.
             </p>
 
             {imageList.map((image, index) => (
-              <Box py="4">
-                <img key={index} src={image} alt="Captured" />
+              <Box py="4" key={index} >
+                <img src={image} alt="Captured" />
               </Box>
             ))}
           </DrawerBody>
