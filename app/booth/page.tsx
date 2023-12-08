@@ -5,7 +5,7 @@ export default function Booth() {
   return (
     <>
       <Container maxW="container.lg">
-        <Flex justify="space-between" align="center">
+        <Flex justify="space-between" align="center" pt={8}>
           <Heading py="4">Photo Booth</Heading>
           <HStack>
             <Tag colorScheme="purple">Beta</Tag>

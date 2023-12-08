@@ -50,7 +50,8 @@ export default function Nav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Box bg="grey.900" px={4}>
+      <Box bg="gray.900"
+        color="gray.200" px={4}>
         <Flex
           h={16}
           alignItems={"center"}

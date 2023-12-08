@@ -146,6 +146,12 @@ const BoothCoreComponent = () => {
   const width = 1920;
   const height = 1080;
 
+  const handleReset = () => {
+    setImageList([]);
+    setImgSrc(null);
+    setFirstDownload(false);
+  }
+
   // Additional functionalities can be added here
 
   return (
@@ -204,6 +210,7 @@ const BoothCoreComponent = () => {
         isOpen={isOpen}
         finalFocusRef={btnRef}
         size="md"
+
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -226,7 +233,7 @@ const BoothCoreComponent = () => {
 
       <Container maxW="container.lg" py="4">
         {/* Main Grid */}
-        <Grid gridTemplateColumns="1fr 0.25fr" gap="4">
+        <Grid gridTemplateColumns="1fr 1fr" gap="2">
           {/* 1 Grid Item - Controls */}
           <GridItem colEnd={2}>
             {/* Controls */}
@@ -274,27 +281,21 @@ const BoothCoreComponent = () => {
                 Robot Moves
               </Heading>
               <Flex
-                justifyContent="space-between"
+                justifyContent="start"
                 gap="4"
-                overflowX={"scroll"}
-                overflowY={"hidden"}
                 py="4"
               >
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
-                <RobotMoveView />
+                <RobotMoveView title="Precision Glide" />
+                <RobotMoveView title="RoboRhythm Roll" />
+                <RobotMoveView title="Binary Ballet" />
+                <RobotMoveView title="Automotion Symphony" />
+
               </Flex>
             </Card>
           </GridItem>
 
           {/* 3 Grid Item - Previous Mode */}
-          <GridItem>
+          <GridItem colSpan={2}>
             <Button ref={btnRef} onClick={onOpen} variant="outline">
               Gallery
             </Button>
@@ -303,32 +304,39 @@ const BoothCoreComponent = () => {
           </GridItem>
 
           {/* Camera Roll */}
-          <GridItem>
-            <Heading size="md" py="2">
-              Camera Roll
-            </Heading>
+          <GridItem colSpan={2}>
+            <Flex justifyContent={"space-between"}>
+              <Heading size="md" py="2">
+                Camera Roll
+              </Heading>
+              <Button onClick={handleReset} variant="outline">
+                Clear
+              </Button>
+            </Flex>
             {imgSrc && (
               <>
-                <Card variant="outline" p="2" my="2">
-                  <Heading size="sm" py="1">
+                <Card variant="outline" p="4" my="2">
+                  <Heading size="sm" py="2">
                     Last Photo
                   </Heading>
                   <img src={imgSrc} alt="Captured" />
-                  <Button size="sm" onClick={downloadImage} variant="unstyled">
+                  <Button size="sm" p={4} onClick={downloadImage} variant="unstyled">
                     <DownloadIcon />
                   </Button>
                 </Card>
 
-                <Card variant="outline" p="2" my="2">
+                <Card variant={"outline"} p="4" my="2">
                   <Heading size="sm" py="1">
                     Last 3 Photos
                   </Heading>
-                  {imageList.slice(-3).map((image, index) => (
-                    <Box key={index}>
-                      <img src={image} alt="Captured" />
-                      <Spacer p="2" />
-                    </Box>
-                  ))}
+                  <Flex justifyContent="start" gap={4} wrap={"wrap"} py={4}>
+                    {imageList.slice(-3).map((image, index) => (
+                      <Box key={index} maxW={"xs"}>
+                        <img src={image} alt="Captured" />
+                        <Spacer p="2" />
+                      </Box>
+                    ))}
+                  </Flex>
                 </Card>
               </>
             )}

@@ -27,16 +27,16 @@ export default function StatsCard(props: StatsCardProps) {
       border={"1px solid"}
       borderColor={useColorModeValue("gray.800", "gray.500")}
       rounded={"lg"}
-      maxW={"220px"}
+      maxW={"200px"}
     >
       <Box>
-        <StatLabel fontWeight={"medium"} isTruncated pb="2">
+        <StatLabel fontSize={"md"} fontWeight={"bold"} isTruncated pb="1">
           {title}
         </StatLabel>
         <StatNumber fontSize={"2xl"} fontWeight={"medium"}>
           <Image src="/move.png" width="80" height="80" alt="robot move" />
         </StatNumber>
       </Box>
-    </Stat>
+    </Stat >
   );
 }

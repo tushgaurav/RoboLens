@@ -1,6 +1,6 @@
 import StatsCard from "@/components/StatCard/StatCard";
 import { GiMove } from "react-icons/gi";
 
-export default function RobotMoveView() {
-  return <StatsCard title="Robot Move" stat="0" icon={<GiMove />} />;
+export default function RobotMoveView({ title }: { title: string }) {
+  return <StatsCard title={title} stat="0" icon={<GiMove />} />;
 }

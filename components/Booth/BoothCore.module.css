@@ -23,12 +23,22 @@
   box-shadow: 0 0 10px 20px #1f5ef1;
 }
 
-@keyframes border-ripple {
+/* @keyframes border-ripple {
   0% {
-    box-shadow: 0 0 0 10px #57908a;
+    box-shadow: 0 0 0 10px #ff25e9;
   }
   100% {
-    box-shadow: 0 0 0 10px #1c2b61;
+    box-shadow: 0 0 0 10px #00ff59;
+  }
+} */
+
+@keyframes border-ripple {
+  0% {
+    box-shadow: 0 0 0 8px rgba(48, 50, 61, 0.8); /* Dark Blue-Gray */
+  }
+
+  100% {
+    box-shadow: 0 0 0 5px rgba(17, 18, 24, 0.2); /* Dark Black */
   }
 }
 
