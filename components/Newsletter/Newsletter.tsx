@@ -46,7 +46,7 @@ export default function Newsletter() {
             grow={1}
         >
             <Container
-                bg={useColorModeValue('white', 'whiteAlpha.100')}
+                bg='whiteAlpha.100'
                 boxShadow={'xl'}
                 rounded={'lg'}
                 p={6}>
