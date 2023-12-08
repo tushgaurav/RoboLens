@@ -1,6 +1,5 @@
 "use client";
 
-import styles from "./Nav.module.css";
 import Image from "next/image";
 import {
   Box,
@@ -110,7 +109,7 @@ export default function Nav() {
           </Flex>
         </Flex>
       </Box>
-      <div className={styles.animated_gradientBar}> </div>
+      {/* <div className={styles.animated_gradientBar}> </div> */}
     </>
   );
 }

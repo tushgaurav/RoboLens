@@ -48,7 +48,7 @@ const ID = generateUniqueId();
 
 const BoothCoreComponent = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef();
+  const btnRef = useRef<HTMLButtonElement>(null);
   const [imageCount, setImageCount] = useState(0);
 
   const [firstDownload, setFirstDownload] = useState(false);
@@ -62,7 +62,7 @@ const BoothCoreComponent = () => {
   // React-Webcam Functionality
   const webcamRef = useRef(null) as any;
   const [imgSrc, setImgSrc] = useState(null);
-  const [imageList, setImageList] = useState([]);
+  const [imageList, setImageList] = useState(["imgSrc"]);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const mediaRecorderRef = useRef(null) as any;
@@ -103,7 +103,7 @@ const BoothCoreComponent = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       document.body.appendChild(a);
-      a.style = "display: none";
+      // a.style = "display: none";
       a.href = url;
       const fileName = VideoFileNameGen();
       a.download = `${fileName}.mp4`;
@@ -133,7 +133,7 @@ const BoothCoreComponent = () => {
 
   const downloadImage = () => {
     setFirstDownload(true);
-    const link = document.createElement("a");
+    const link: any = document.createElement("a");
     link.href = imgSrc;
     const fileName = ImageFileNameGen();
     link.download = `${fileName}.png`;

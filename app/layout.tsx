@@ -1,8 +1,10 @@
+
+import "./globals.css";
+
 import { Providers } from "./providers";
 
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import "./globals.css";
 import Image from "next/image";
 import Nav from "@/components/Nav/Nav";
 import Footer from "@/components/Footer/Footer";

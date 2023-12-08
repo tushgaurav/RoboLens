@@ -28,8 +28,13 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "eslint": "^8.55.0",
     "eslint-config-next": "14.0.1",
+    "stylelint": "^15.11.0",
+    "stylelint-config-standard": "^34.0.0",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "css-loader": "^5.2.4"
   }
 }
