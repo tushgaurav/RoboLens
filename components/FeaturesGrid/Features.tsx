@@ -19,7 +19,7 @@ export default function FeatureGrid({ maxW }: { maxW: string }) {
                 </GridItem>
 
 
-                <GridItem px={"4"} m={"2"} className={styles.glass} rowSpan={"2"}>
+                <GridItem px={"4"} m={"2"} className={styles.glass} rowSpan={2}>
                     <Heading fontSize={"large"} pt={"4"}>Adaptive Precision
                     </Heading>
                     <Text fontSize={""} pt={"4"}>

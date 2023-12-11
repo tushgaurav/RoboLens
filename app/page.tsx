@@ -17,6 +17,7 @@ import { FcWebcam, FcTabletAndroid, FcLike } from "react-icons/fc";
 import Link from "next/link";
 import Stats from "@/components/Stats/Stats";
 import Newsletter from "@/components/Newsletter/Newsletter";
+import FeatureGrid from "@/components/FeaturesGrid/Features";
 
 const Feature = ({ title, text, icon }: any) => {
   return (
@@ -42,13 +43,14 @@ const Feature = ({ title, text, icon }: any) => {
 export default function Home() {
   return (
     <>
-      <Container maxW={"3xl"} mb="40">
+      <Container maxW={"3xl"} mb="40" >
         <Flex
           align={"center"}
           gap={8}
           flexDirection={"row-reverse"}
           py={{ base: 2, md: 4 }}
           flexWrap={"wrap"}
+
         >
           <Box >
             <video
@@ -67,7 +69,7 @@ export default function Home() {
           </Box>
           <Flex direction={'column'} gap={2}>
 
-            <Box>
+            <Box >
               <Heading
                 fontWeight={600}
                 fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
@@ -114,6 +116,9 @@ export default function Home() {
       </Container >
 
       <Container maxW={"5xl"} mb="20">
+
+
+
         <Box p={4} mb="20">
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
             <Feature
