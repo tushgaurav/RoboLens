@@ -20,6 +20,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import Link from "next/link";
 
 interface Props {
   children: React.ReactNode;
@@ -51,7 +52,9 @@ export default function Nav() {
   return (
     <>
       <Box bg="gray.900"
-        color="gray.200" px={4}>
+        color="gray.200" px={4}
+
+      >
         <Flex
           h={16}
           alignItems={"center"}
@@ -59,13 +62,15 @@ export default function Nav() {
           maxW="container.xl"
           mx="auto"
         >
-          <Image
-            style={{ marginTop: "10px" }}
-            src="/logo.png"
-            alt="logo"
-            width={190}
-            height={33}
-          />
+          <Link href="/">
+            <Image
+              style={{ marginTop: "10px" }}
+              src="/logo.png"
+              alt="logo"
+              width={190}
+              height={33}
+            />
+          </Link>
 
           <Flex alignItems={"center"}>
             <Stack direction={"row"} spacing={7} align="center">
