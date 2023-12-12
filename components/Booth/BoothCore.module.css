@@ -9,7 +9,7 @@
   background-color: #0d121e;
   box-shadow: 0 0 5px 10px #ff1010;
   margin: 1em 0;
-  animation: 1s infinite alternate border-ripple-recording;
+  animation: 3s infinite alternate border-ripple;
 }
 
 .blur_box_capturing {

@@ -256,7 +256,7 @@ const BoothCoreComponent = () => {
 
               {capturing ? (
                 <Button onClick={handleStopCaptureClick} colorScheme="red">
-                  <Active color="red.900" />
+                  <Active color="red.600" />
                   Stop Capture
                 </Button>
               ) : (
