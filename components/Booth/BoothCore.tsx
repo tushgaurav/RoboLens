@@ -44,6 +44,8 @@ import Confetti from "react-confetti";
 import RobotMoveView from "./RobotMoveView/RobotMoveView";
 import { Active, Inactive } from "../StatusIndicator/StatusIndicator";
 
+import { startPose } from "@/lib/ClientConnect";
+
 const ID = generateUniqueId();
 
 const BoothCoreComponent = () => {
@@ -65,6 +67,7 @@ const BoothCoreComponent = () => {
   const [imageList, setImageList] = useState(["imgSrc"]);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
+  const [poseSelection, setPoseSelection] = useState(0);
   const mediaRecorderRef = useRef(null) as any;
 
   const handleDataAvailable = useCallback(
@@ -78,6 +81,15 @@ const BoothCoreComponent = () => {
 
   // Video Recording Functionality
   const handleStartCaptureClick = useCallback(() => {
+
+    fetch(`http://localhost:8000/pose`, {
+      cache: 'no-cache',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: "teting", id: poseSelection })
+    });
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
       mimeType: "video/webm",
@@ -87,7 +99,7 @@ const BoothCoreComponent = () => {
       handleDataAvailable
     );
     mediaRecorderRef.current.start();
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable, poseSelection]);
 
 
   const handleStopCaptureClick = useCallback(() => {
@@ -278,17 +290,27 @@ const BoothCoreComponent = () => {
           <GridItem colSpan={2}>
             <Card variant="outline" p="4">
               <Heading size="sm" py="2">
-                Robot Moves
+                Robot Moves {poseSelection}
               </Heading>
               <Flex
                 justifyContent="start"
                 gap="4"
                 py="4"
               >
-                <RobotMoveView title="Precision Glide" />
-                <RobotMoveView title="RoboRhythm Roll" />
-                <RobotMoveView title="Binary Ballet" />
-                <RobotMoveView title="Automotion Symphony" />
+                <div onClick={() => {
+                  setPoseSelection(0)
+                }}>
+                  <RobotMoveView selected={poseSelection == 0} title="Precision Glide" />
+                </div>
+                <div onClick={() => { setPoseSelection(1) }}>
+                  <RobotMoveView selected={poseSelection == 1} title="RoboRhythm Roll" />
+                </div>
+                <div onClick={() => { setPoseSelection(2) }}>
+                  <RobotMoveView selected={poseSelection == 2} title="Binary Ballet" />
+                </div>
+                <div onClick={() => { setPoseSelection(3) }}>
+                  <RobotMoveView selected={poseSelection == 3} title="Automotion Symphony" />
+                </div>
 
               </Flex>
             </Card>
