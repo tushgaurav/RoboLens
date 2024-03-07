@@ -22,7 +22,7 @@ interface StatsCardProps {
 }
 
 export default function StatsCard(props: StatsCardProps) {
-  const { title, stat, icon, selected, onClick } = props;
+  const { title, stat, icon, selected } = props;
   return (
     <Stat
       p="4"

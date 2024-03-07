@@ -45,6 +45,7 @@ import RobotMoveView from "./RobotMoveView/RobotMoveView";
 import { Active, Inactive } from "../StatusIndicator/StatusIndicator";
 
 import { startPose } from "@/lib/ClientConnect";
+import EmailSend from "./EmailSend";
 
 const ID = generateUniqueId();
 
@@ -57,14 +58,16 @@ const BoothCoreComponent = () => {
   const [mirrored, setMirrored] = useState(false);
   const [audio, setAudio] = useState(false);
 
+  const [imgURLs, setImgURLs] = useState<string[]>([]);
+
   useEffect(() => {
     setFirstDownload(false);
   }, [firstDownload]);
 
   // React-Webcam Functionality
   const webcamRef = useRef(null) as any;
-  const [imgSrc, setImgSrc] = useState(null);
-  const [imageList, setImageList] = useState(["imgSrc"]);
+  const [imgSrc, setImgSrc] = useState<any>();
+  const [imageList, setImageList] = useState<string[]>([]);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [poseSelection, setPoseSelection] = useState(0);
@@ -140,7 +143,8 @@ const BoothCoreComponent = () => {
     console.log(imageSrc);
 
     setImageCount((prev) => prev + 1)
-    await uploadImage(ID, imageSrc, `photoBooth-${imageCount}.png`);
+    const url = await uploadImage(ID, imageSrc, `photoBooth-${imageCount}.png`);
+    setImgURLs((prev) => [...prev, url]);
   };
 
   const downloadImage = () => {
@@ -162,9 +166,11 @@ const BoothCoreComponent = () => {
     setImageList([]);
     setImgSrc(null);
     setFirstDownload(false);
+    setImgURLs([]);
   }
 
-  // Additional functionalities can be added here
+
+
 
   return (
     <>
@@ -287,7 +293,7 @@ const BoothCoreComponent = () => {
           </GridItem>
 
           {/* 2 Grid Item - Robot Moves */}
-          <GridItem colSpan={2}>
+          {/* <GridItem colSpan={2}>
             <Card variant="outline" p="4">
               <Heading size="sm" py="2">
                 Robot Moves {poseSelection}
@@ -314,7 +320,7 @@ const BoothCoreComponent = () => {
 
               </Flex>
             </Card>
-          </GridItem>
+          </GridItem> */}
 
           {/* 3 Grid Item - Previous Mode */}
           <GridItem colSpan={2}>
@@ -322,6 +328,8 @@ const BoothCoreComponent = () => {
               Gallery
             </Button>
 
+            <Spacer p="2" />
+            <EmailSend urls={imgURLs} />
             <Box py="4"></Box>
           </GridItem>
 
@@ -372,132 +380,3 @@ const BoothCoreComponent = () => {
 };
 
 export default BoothCoreComponent;
-// import React, { useState, useRef } from "react";
-// import {
-//   Box,
-//   Button,
-//   Grid,
-//   GridItem,
-//   IconButton,
-//   useToast,
-// } from "@chakra-ui/react";
-// import { FaCamera, FaDownload } from "react-icons/fa";
-
-// const BoothCoreComponent = () => {
-//   const [isRecording, setIsRecording] = useState(false);
-//   const [videoUrl, setVideoUrl] = useState("");
-//   const videoRef = useRef<HTMLVideoElement>(null);
-//   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-//   const chunksRef = useRef<Blob[]>([]);
-//   const toast = useToast();
-
-//   const imageList = [];
-
-//   const handleStartRecording = async () => {
-//     try {
-//       const stream = await navigator.mediaDevices.getUserMedia({
-//         video: true,
-//         audio: true,
-//       });
-//       mediaRecorderRef.current = new MediaRecorder(stream);
-//       mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-//         chunksRef.current.push(event.data);
-//       });
-//       mediaRecorderRef.current.addEventListener("stop", () => {
-//         const blob = new Blob(chunksRef.current, { type: "video/mp4" });
-//         setVideoUrl(URL.createObjectURL(blob));
-//         chunksRef.current = [];
-//       });
-//       mediaRecorderRef.current.start();
-//       setIsRecording(true);
-//     } catch (error) {
-//       console.error(error);
-//       toast({
-//         title: "Error",
-//         description: "Failed to start recording",
-//         status: "error",
-//         duration: 5000,
-//         isClosable: true,
-//       });
-//     }
-//   };
-
-//   const handleStopRecording = () => {
-//     mediaRecorderRef.current?.stop();
-//     setIsRecording(false);
-//   };
-
-//   const handleDownload = () => {
-//     const a = document.createElement("a");
-//     a.href = videoUrl;
-//     a.download = "captured-video.mp4";
-//     a.click();
-//   };
-
-//   return (
-//     <>
-//       <Grid templateColumns="repeat(12, 1fr)" gap={4}>
-//         <GridItem colSpan={6}>
-//           <Box
-//             w="full"
-//             h="full"
-//             bg="gray.100"
-//             display="flex"
-//             alignItems="center"
-//             justifyContent="center"
-//             position="relative"
-//           >
-//             {videoUrl ? (
-//               <video ref={videoRef} src={videoUrl} controls />
-//             ) : (
-//               <Box fontSize="6xl" color="gray.400">
-//                 <FaCamera />
-//               </Box>
-//             )}
-//             {isRecording && (
-//               <Box
-//                 position="absolute"
-//                 top={0}
-//                 left={0}
-//                 right={0}
-//                 bottom={0}
-//                 bg="red.500"
-//                 opacity={0.5}
-//               />
-//             )}
-//           </Box>
-//         </GridItem>
-//         <GridItem colSpan={6}>
-//           {!isRecording ? (
-//             <Button colorScheme="blue" onClick={handleStartRecording}>
-//               Record
-//             </Button>
-//           ) : (
-//             <Button colorScheme="red" onClick={handleStopRecording}>
-//               Stop
-//             </Button>
-//           )}
-//           {videoUrl && (
-//             <IconButton
-//               icon={<FaDownload />}
-//               aria-label="Download"
-//               onClick={handleDownload}
-//               ml={4}
-//             />
-//           )}
-//         </GridItem>
-//         <GridItem colSpan={12}>
-//           <Box maxH="xl">
-//             {imageList.slice(-3).map((image, index) => (
-//               <img key={index} src={image} alt="Captured" />
-//             ))}
-//           </Box>
-//         </GridItem>
-//         {/* Additional functionalities can be incorporated here */}
-//         <GridItem></GridItem>
-//       </Grid>
-//     </>
-//   );
-// };
-
-// export default BoothCoreComponent;
